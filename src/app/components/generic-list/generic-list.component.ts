@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {CollectionViewer, ListRange} from '@angular/cdk/collections';
 import {Observable, Subject} from 'rxjs';
 import {GenericListDataSource} from '../../datasources/generic-list-data-source';
-import {takeUntil} from 'rxjs/operators';
+import {Hierarchy} from '../../models/another-try';
 
 @Component({
   selector: 'app-generic-list',
@@ -10,12 +10,13 @@ import {takeUntil} from 'rxjs/operators';
   styleUrls: ['./generic-list.component.css']
 })
 export class GenericListComponent implements OnInit, OnChanges, OnDestroy, CollectionViewer {
-  @Input() dataSource: GenericListDataSource<any[]>;
-
-  public pageRows: any[];
+  public data: any[];
   public page: number;
   public pageSize: number;
   public columns: any[];
+  public hierarchies: Hierarchy[];
+
+  @Input() dataSource: GenericListDataSource<any>;
 
   private viewChangeSubject = new Subject<ListRange>();
   viewChange: Observable<ListRange> = this.viewChangeSubject.asObservable();
@@ -23,11 +24,15 @@ export class GenericListComponent implements OnInit, OnChanges, OnDestroy, Colle
   private destroy: Subject<boolean> = new Subject<boolean>();
 
   public ngOnInit(): void {
-    this.dataSource.connect(this).pipe(takeUntil(this.destroy)).subscribe((value: any[]) => {
-      this.pageRows = value;
-    });
-    this.dataSource.getColumns().pipe(takeUntil(this.destroy)).subscribe((value: any[]) => {
+    const connection = this.dataSource.connect();
+    connection.columns.subscribe((value: any[]) => {
       this.columns = value;
+    });
+    connection.data.subscribe((value: any[]) => {
+      this.data = value;
+    });
+    connection.hierarchies.subscribe((value: Hierarchy[]) => {
+      this.hierarchies = value;
     });
   }
 

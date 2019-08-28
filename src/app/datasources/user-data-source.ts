@@ -10,12 +10,15 @@ const columns = [
   { field: 'email' },
 ];
 
-export class UserDataSource extends GenericListDataSource<User> {
+const hierarchies = [
+  { field: 'name'}
+]
+
+export class UserDataSource  {
   entities: Observable<User[]>;
   columns = of(columns);
 
   constructor(private userService: UserService) {
-    super();
   }
 
   connect(collectionViewer: CollectionViewer): Observable<User[] | ReadonlyArray<User>> {

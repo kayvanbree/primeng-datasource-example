@@ -15,13 +15,7 @@ export class AppComponent implements OnInit {
   userDataSource: UserDataSource;
   todoDataSource: TodoDataSource;
 
-  constructor(
-    private userService: UserService,
-    private todoService: TodoService,
-  ) {  }
-
   public ngOnInit(): void {
-    this.userDataSource = new UserDataSource(this.userService);
-    this.todoDataSource = new TodoDataSource(this.todoService);
+    this.todoDataSource = new TodoDataSource();
   }
 }
